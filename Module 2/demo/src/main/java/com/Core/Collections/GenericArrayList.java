@@ -32,6 +32,12 @@ public class GenericArrayList<T> {
         array[size++] = element;
     }
 
+    public void addAll(T[] elements){
+        for (T t : elements) {
+            this.add(t);
+        }
+    }
+
     public T get(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
