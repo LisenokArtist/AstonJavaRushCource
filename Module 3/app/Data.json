@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Непобедимый",
+    "authors": [
+      {
+        "_furstName": "Станислав",
+        "_secondName": "",
+        "_lastName": "Лем"
+      }
+    ],
+    "pages": 224,
+    "year": 1964
+  },
+  {
+    "name": "Солярис",
+    "authors": [
+      {
+        "_furstName": "Станислав",
+        "_secondName": "",
+        "_lastName": "Лем"
+      }
+    ],
+    "pages": 288,
+    "year": 1961
+  },
+  {
+    "name": "Марсианин",
+    "authors": [
+      {
+        "_furstName": "Энди",
+        "_secondName": "",
+        "_lastName": "Вейер"
+      }
+    ],
+    "pages": 480,
+    "year": 2011
+  },
+  {
+    "name": "Пикник на обочине",
+    "authors": [
+      {
+        "_furstName": "Борис",
+        "_secondName": "",
+        "_lastName": "Стругацкий"
+      },
+      {
+        "_furstName": "Аркадий",
+        "_secondName": "",
+        "_lastName": "Стругацкий"
+      }
+    ],
+    "pages": 256,
+    "year": 1972
+  },
+  {
+    "name": "Игра Эндера",
+    "authors": [
+      {
+        "_furstName": "Орсон",
+        "_secondName": "Скотт",
+        "_lastName": "Кард"
+      }
+    ],
+    "pages": 416,
+    "year": 1985
+  },
+  {
+    "name": "Звездный десант",
+    "authors": [
+      {
+        "_furstName": "Роберт",
+        "_secondName": "",
+        "_lastName": "Хайнлайн"
+      }
+    ],
+    "pages": 352,
+    "year": 1959
+  },
+  {
+    "name": "Война миров",
+    "authors": [
+      {
+        "_furstName": "Герберт",
+        "_secondName": "",
+        "_lastName": "Уеллс"
+      }
+    ],
+    "pages": 288,
+    "year": 1898
+  }
+]
