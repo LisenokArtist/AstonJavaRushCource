@@ -1,0 +1,90 @@
+package com.example.Core.Dao.User;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import com.example.Core.Dao.Base.Dao;
+import com.example.Core.Entities.User.User;
+import com.example.Core.Utils.HibernateSessionFactory;
+
+public class UserDao implements Dao<User>{
+
+    @Override
+    public User findById(int id) {
+        User result;
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            result = session.find(User.class, id);
+        }
+        return result;
+    }
+
+    @Override
+    public void save(User obj) {
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            org.hibernate.Transaction transaction = session.beginTransaction();
+            session.persist(obj);
+            transaction.commit();
+        }
+    }
+
+    @Override
+    public void update(User obj) {
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            org.hibernate.Transaction transaction = session.beginTransaction();
+            session.merge(obj);
+            transaction.commit();
+        }
+    }
+
+    @Override
+    public void delete(User obj) {
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            org.hibernate.Transaction transaction = session.beginTransaction();
+            session.remove(obj);
+            transaction.commit();
+        }
+    }
+
+    /**
+     * Удаляет пользователя по его id
+     * @param id идентификатор пользователя
+     * @return int значение удаленных совпадений
+     */
+    public int delete(int id){
+        int result;
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            org.hibernate.Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("DELETE FROM User WHERE id = :ID");
+            query.setParameter("ID", id);
+            result = query.executeUpdate();
+            transaction.commit();
+        }
+        return result;
+    }
+
+    /**
+     * Выводит список пользователей
+     * @param limit кол-во запрашиваемых записей
+     * @return Список пользователей
+     */
+    public List<User> users(int limit){
+        List<User> result;
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            org.hibernate.Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("FROM User").setMaxResults(limit);
+            result = query.list();
+            transaction.commit();
+        }
+        return result;
+    }
+
+    /**
+     * Выводит список пользователей не более 10 записей
+     * @return Список пользователей
+     */
+    public List<User> users(){
+        return users(10);
+    }
+}

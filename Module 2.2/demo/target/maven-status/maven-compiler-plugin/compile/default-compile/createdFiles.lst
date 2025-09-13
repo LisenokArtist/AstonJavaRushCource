@@ -1,0 +1,7 @@
+com\example\Core\Utils\HibernateSessionFactory.class
+com\example\App.class
+com\example\Core\Entities\Base\EntityBase.class
+com\example\Core\Services\UserService.class
+com\example\Core\Dao\Base\Dao.class
+com\example\Core\Entities\User\User.class
+com\example\Core\Dao\User\UserDao.class
