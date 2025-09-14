@@ -28,6 +28,16 @@ public class UserService {
     }
 
     /**
+     * Сохранение пользователя
+     * @param name имя
+     * @param age возраст
+     * @param email электронный адрес
+     */
+    public void saveUser(String name, int age, String email){
+        userDao.save(new User(name, age, email));
+    }
+
+    /**
      * Обновление пользователя
      * @param obj Пользователь
      */

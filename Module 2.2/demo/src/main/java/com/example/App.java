@@ -127,8 +127,7 @@ public class App
             String email = args[2];
 
             if (!name.isEmpty() && age > 0 && !email.isEmpty()){
-                User user = new User(name, age, email);
-                userService.saveUser(user);
+                userService.saveUser(name, age, email);
                 result = "User has been saved";
             } else{
                 result = UNCORRECT_ARGUMENTS_VALUES;
