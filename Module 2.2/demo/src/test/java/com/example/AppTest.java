@@ -36,4 +36,11 @@ public class AppTest
         Configuration conf = new Configuration().configure();
         return;
     }
+
+    @Test
+    public void updateUser(){
+        UserService service = new UserService();
+        service.updateUser(2, "newUserNameValue");
+        System.out.println(service.findUser(2).toString());
+    }
 }

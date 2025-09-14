@@ -155,16 +155,8 @@ public class App
             String name = args[1];
 
             if (!name.isEmpty()){
-                User user = userService.findUser(id);
-                if (user != null){
-                    user.setName(name);
-                    userService.updateUser(user);
-                    result = "User has been updated";
-                }
-                else{
-                    result = NOT_FOUND;
-                }
-                
+                userService.updateUser(id, name);
+                result = "User has been updated";
             } else{
                 result = UNCORRECT_ARGUMENTS_VALUES;
             }
