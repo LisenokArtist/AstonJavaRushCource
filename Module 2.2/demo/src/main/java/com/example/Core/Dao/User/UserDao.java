@@ -38,6 +38,25 @@ public class UserDao implements Dao<User>{
         }
     }
 
+    /**
+     * Обновляет имя пользователя по его идентификатору
+     * @param id идентификатор пользователя
+     * @param name новое имя пользователя
+     * @return true если запись обновлена
+     */
+    public boolean  update(int id, String name){
+        int result;
+        try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {
+            org.hibernate.Transaction transaction = session.beginTransaction();
+            Query query = session.createQuery("UPDATE User SET name = :Name WHERE id = :ID");
+            query.setParameter("ID", id);
+            query.setParameter("Name", name);
+            result = query.executeUpdate();
+            transaction.commit();
+        }
+        return result > 0;
+    }
+
     @Override
     public void delete(User obj) {
         try (Session session = HibernateSessionFactory.getSessionFactory().openSession()) {

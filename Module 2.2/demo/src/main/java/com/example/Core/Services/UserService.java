@@ -36,6 +36,16 @@ public class UserService {
     }
 
     /**
+     * Обновляет имя пользователя
+     * @param id идентификатор пользователя
+     * @param name новое имя пользователя
+     * @return true если обновление прошло успешно
+     */
+    public boolean updateUser(int id, String name){
+        return userDao.update(id, name);
+    }
+
+    /**
      * Удаление пользователя
      * @param obj Пользователь
      */
