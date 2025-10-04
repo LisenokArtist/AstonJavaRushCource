@@ -38,16 +38,10 @@ public class ContainersTest {
 
     @Before
     public void OnStartupTest() throws SQLException{
-        postgres.start();
         userDao = new UserDao(HibernateSessionFactory.getSessionFactory(getConfigurationFromContainer(postgres)));
 
         tryClearDataBase();
         fillDataBaseWithEntity();
-    }
-
-    @After
-    public void OnFinishingTest(){
-        postgres.stop();
     }
 
 

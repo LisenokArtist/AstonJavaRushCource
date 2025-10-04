@@ -67,7 +67,7 @@ public class MockitoTest
 
         boolean isUpdated = service.updateUser(testUser.getId(), "username");
 
-        assertTrue(isUpdated == true);
+        assertTrue(isUpdated);
         verify(service, times(1)).updateUser(testUser.getId(), "username");
     }
 
@@ -79,7 +79,7 @@ public class MockitoTest
 
         boolean isDeleted = service.deleteUserById(id);
         
-        assertTrue(isDeleted == true);
+        assertTrue(isDeleted);
         verify(service, times(1)).deleteUserById(id);
     }
     
