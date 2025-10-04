@@ -24,3 +24,5 @@ hs_err_pid*
 replay_pid*
 /.vs/AstonJavaRushCource/FileContentIndex
 /.vs
+/Module 2.3/.vscode
+/Module 2.5/demo/.mvn/wrapper
