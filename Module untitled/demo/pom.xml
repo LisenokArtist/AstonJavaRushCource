@@ -16,8 +16,8 @@
 
 	<modules>
 		<module>common</module>
-		<module>service</module>
-		<module>notification</module>
+		<module>user-service</module>
+		<module>user-notification-service</module>
 	</modules>
 
 	<name>demo</name>
@@ -51,5 +51,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

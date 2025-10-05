@@ -9,7 +9,7 @@
           <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>notification</artifactId>
+    <artifactId>user-notification-service</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
