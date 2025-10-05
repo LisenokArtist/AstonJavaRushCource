@@ -28,10 +28,11 @@ import com.example.datamodels.events.user.UserEvent;
 @PropertySource("classpath:application.properties")
 public class UserConfig {
     @Value("${spring.kafka.bootstrap-servers}")
-    public String BOOTSTRAPSERVERS;
-    public static final String USERTOPIC = "user-events";
-    public static final String USERGROUP = "user-event-consumer-group";
-    public static final String LISTENERCONTAINERFACTORY = "userListenerContainerFactory";
+    private String BOOTSTRAPSERVERS;
+    @Value("${spring.kafka.user.topic}")
+    private String USERTOPIC;
+    @Value("${spring.kafka.user.group}")
+    private String USERGROUP;
     
     @Bean
     public NewTopic userTopic(){
@@ -43,7 +44,6 @@ public class UserConfig {
     @Bean
     public ProducerFactory<String, UserEvent> userProducerFactory(){
         Map<String, Object> props = new HashMap<>();
-        System.out.print(BOOTSTRAPSERVERS);
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAPSERVERS);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
@@ -68,7 +68,7 @@ public class UserConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
-    @Bean(name=LISTENERCONTAINERFACTORY)
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, UserEvent> userListenerContainerFactory(
         ConsumerFactory<String, UserEvent> userConsumer
     ){
