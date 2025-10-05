@@ -1,4 +1,4 @@
-package com.example.services.user;
+package com.example.services;
 
 import java.util.concurrent.CountDownLatch;
 

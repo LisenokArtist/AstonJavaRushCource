@@ -1,4 +1,4 @@
-package com.example.DataModels.Models.User;
+package com.example.datamodels.models.user;
 
 import lombok.Getter;
 

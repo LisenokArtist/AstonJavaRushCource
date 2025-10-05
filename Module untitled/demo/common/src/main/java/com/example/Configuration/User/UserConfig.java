@@ -1,4 +1,4 @@
-package com.example.Configuration.User;
+package com.example.configuration.user;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +11,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -21,12 +22,13 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.example.DataModels.Events.User.UserEvent;
+import com.example.datamodels.events.user.UserEvent;
 
 @Configuration
+@PropertySource("classpath:application.properties")
 public class UserConfig {
     @Value("${spring.kafka.bootstrap-servers}")
-    public static String BOOTSTRAPSERVERS;
+    public String BOOTSTRAPSERVERS;
     public static final String USERTOPIC = "user-events";
     public static final String USERGROUP = "user-event-consumer-group";
     public static final String LISTENERCONTAINERFACTORY = "userListenerContainerFactory";
@@ -62,7 +64,7 @@ public class UserConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, USERGROUP);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.example.DataModels");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         return new DefaultKafkaConsumerFactory<>(props);
     }
 

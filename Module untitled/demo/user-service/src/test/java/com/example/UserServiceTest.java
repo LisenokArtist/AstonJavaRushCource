@@ -1,4 +1,5 @@
-package com.example.service;
+package com.example;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +11,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.TestPropertySource;
 
-import com.example.DataModels.Entities.User.User;
-import com.example.DataModels.Events.User.UserEvent;
-import com.example.DataModels.Models.User.UserShort;
-import com.example.Repositories.User.UserRepository;
-import com.example.Services.User.UserEventListener;
-import com.example.Services.UserService;
+import com.example.datamodels.entities.user.User;
+import com.example.datamodels.models.user.UserShort;
+import com.example.repositories.user.UserRepository;
+import com.example.services.UserService;
+import com.example.services.user.UserEventListener;
 
 @SpringBootTest
-class ServiceTests {
-	@Autowired
+@EmbeddedKafka(partitions = 1, topics = {"test-topic"})
+@TestPropertySource(properties = {"spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}"})
+public class UserServiceTest {
+    @Autowired
     private UserService service;
     @Autowired
     private UserEventListener listener;
@@ -54,7 +58,7 @@ class ServiceTests {
         assertThat(listener.getReceivedEvent().getEventType()).isEqualTo(UserEvent.UserEventType.DELETE);
     }
 
-	private static void fillDataBaseIfEmpty(UserRepository repository){
+    private static void fillDataBaseIfEmpty(UserRepository repository){
         if (repository.count() <= 0){
             List<User> users = createUsers(10);
             repository.saveAll(users);

@@ -1,4 +1,4 @@
-package com.example.DataModels.Entities;
+package com.example.datamodels.entities;
 
 import java.time.LocalDateTime;
 

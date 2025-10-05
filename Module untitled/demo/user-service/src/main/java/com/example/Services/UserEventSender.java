@@ -1,13 +1,13 @@
-package com.example.Services;
+package com.example.services;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import com.example.DataModels.Entities.User.User;
-import com.example.DataModels.Events.User.UserEvent;
-import com.example.DataModels.Events.User.UserEvent.UserEventType;
+import com.example.datamodels.entities.user.User;
+import com.example.datamodels.events.user.UserEvent;
+import com.example.datamodels.events.user.UserEvent.UserEventType;
 
 @Component
 public class UserEventSender {

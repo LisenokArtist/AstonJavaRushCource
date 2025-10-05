@@ -1,8 +1,8 @@
-package com.example.DataModels.Events.User;
+package com.example.datamodels.events.user;
 
 import java.time.LocalDateTime;
 
-import com.example.DataModels.Entities.User.User;
+import com.example.datamodels.entities.user.User;
 
 import lombok.Getter;
 

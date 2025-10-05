@@ -1,6 +1,6 @@
-package com.example.DataModels.Models.User;
+package com.example.datamodels.models.user;
 
-import com.example.DataModels.Entities.User.User;
+import com.example.datamodels.entities.user.User;
 
 import lombok.Getter;
 

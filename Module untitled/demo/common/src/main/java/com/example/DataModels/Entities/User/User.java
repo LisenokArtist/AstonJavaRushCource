@@ -1,6 +1,6 @@
-package com.example.DataModels.Entities.User;
+package com.example.datamodels.entities.user;
 
-import com.example.DataModels.Entities.EntityBase;
+import com.example.datamodels.entities.EntityBase;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

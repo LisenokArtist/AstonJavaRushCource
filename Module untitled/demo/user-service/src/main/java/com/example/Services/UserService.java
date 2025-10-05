@@ -1,4 +1,4 @@
-package com.example.Services;
+package com.example.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,10 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.DataModels.Entities.User.User;
-import com.example.DataModels.Models.User.UserShort;
-import com.example.Repositories.User.UserRepository;
-
+import com.example.datamodels.entities.user.User;
+import com.example.datamodels.models.user.UserShort;
+import com.example.repositories.user.UserRepository;
 @Service
 public class UserService {
     @Autowired
