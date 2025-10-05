@@ -15,6 +15,8 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.TestPropertySource;
 
 import com.example.datamodels.entities.user.User;
+import static com.example.datamodels.events.user.UserEvent.UserEventType.CREATE;
+import static com.example.datamodels.events.user.UserEvent.UserEventType.DELETE;
 import com.example.datamodels.models.user.UserShort;
 import com.example.repositories.user.UserRepository;
 import com.example.services.UserService;
@@ -43,7 +45,7 @@ public class UserServiceTest {
         assertThat(userShort.getName()).isEqualTo(user.getName());
         
         listener.getLatch().await(10, TimeUnit.SECONDS);
-        assertThat(listener.getReceivedEvent().getEventType()).isEqualTo(UserEvent.UserEventType.CREATE);
+        assertThat(listener.getReceivedEvent().getEventType()).isEqualTo(CREATE);
         assertThat(listener.getReceivedEvent().getUserEmail()).isEqualTo(user.getEmail());
     }
 
@@ -55,7 +57,7 @@ public class UserServiceTest {
         assertThat(userShort.getId()).isEqualTo(userFromDB.getId());
         
         listener.getLatch().await(10, TimeUnit.SECONDS);
-        assertThat(listener.getReceivedEvent().getEventType()).isEqualTo(UserEvent.UserEventType.DELETE);
+        assertThat(listener.getReceivedEvent().getEventType()).isEqualTo(DELETE);
     }
 
     private static void fillDataBaseIfEmpty(UserRepository repository){
