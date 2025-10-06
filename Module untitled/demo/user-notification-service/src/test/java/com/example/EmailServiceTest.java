@@ -1,40 +1,65 @@
 package com.example;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import com.example.services.EmailService;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
+
+import jakarta.mail.MessagingException;
 
 @SpringBootTest
+@EmbeddedKafka(partitions = 1)
+@TestPropertySource(properties = {"spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}"})
+@ActiveProfiles("test") 
 public class EmailServiceTest {
+    @Value("${spring.mail.username}")
+    private String USERNAME;
+    @Value("${spring.mail.password}")
+    private String PASSWORD;
+    @Value("${spring.mail.host}")
+    private String HOST;
+    @Value("${spring.mail.port}")
+    private int PORT;
+
     @Autowired
-    @InjectMocks
     private EmailService service;
 
-    @Mock
-    private JavaMailSender sender;
-    
+    private GreenMail greenMail;
+
+    @BeforeEach
+    @SuppressWarnings("unused")
+    void beforeEach() {
+        ServerSetup setup = new ServerSetup(PORT, HOST, "smtp"); // Example port
+        greenMail = new GreenMail(setup);
+        greenMail.setUser(USERNAME, PASSWORD);
+        greenMail.start();
+    }
+
     @Test
-    void shouldSendEmail(){
-        String to = "username@email.com";
+    void shouldSendEmail() throws IOException, MessagingException{
+        String from = USERNAME;
+        String to = "test@example.com";
         String subject = "Java spring application test message";
         String text = "This is a test message sended from unit test java application";
+        
+        service.sendEmail(from, to, subject, text);
 
-        service.sendEmail(to, subject, text);
-
-        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
-        verify(sender).send(captor.capture());
-        SimpleMailMessage sentMessage = captor.getValue();
-        assertEquals(to, sentMessage.getTo());
-        assertEquals(subject, sentMessage.getSubject());
-        assertEquals(text, sentMessage.getText());
+        assertTrue(greenMail.waitForIncomingEmail(5000, 1));
+        assertEquals(1, greenMail.getReceivedMessages().length);
+        assertEquals(from, greenMail.getReceivedMessages()[0].getFrom()[0].toString());
+        assertEquals(subject, greenMail.getReceivedMessages()[0].getSubject());
+        assertEquals(text, greenMail.getReceivedMessages()[0].getContent().toString().trim());
     }
 }
