@@ -6,8 +6,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import com.example.datamodels.entities.user.User;
-import com.example.datamodels.events.user.UserEvent;
-import com.example.datamodels.events.user.UserEvent.UserEventType;
+import com.example.datamodels.models.user.UserEvent;
+import com.example.datamodels.models.user.UserEvent.UserEventType;
 
 @Component
 public class UserEventSender {

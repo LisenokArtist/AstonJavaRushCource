@@ -3,7 +3,7 @@ package com.example.services.user;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.example.datamodels.events.user.UserEvent;
+import com.example.datamodels.models.user.UserEvent;
 
 import lombok.Getter;
 

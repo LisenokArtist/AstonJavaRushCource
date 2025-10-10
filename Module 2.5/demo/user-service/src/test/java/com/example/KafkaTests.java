@@ -11,19 +11,16 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.TestPropertySource;
 
-import com.example.configuration.user.UserConfig;
 import com.example.datamodels.entities.user.User;
-import com.example.datamodels.events.user.UserEvent;
-import com.example.datamodels.events.user.UserEvent.UserEventType;
+import com.example.datamodels.models.user.UserEvent;
+import com.example.datamodels.models.user.UserEvent.UserEventType;
 import com.example.services.UserEventSender;
 import com.example.services.user.UserEventListener;
 
 @SpringBootTest
-@Import(UserConfig.class)
 @EmbeddedKafka(partitions = 1)
 @TestPropertySource(properties = {"spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}"})
 class KafkaTests {

@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 import com.example.services.EmailService;
 import com.icegreen.greenmail.util.GreenMail;
@@ -20,9 +17,6 @@ import com.icegreen.greenmail.util.ServerSetup;
 import jakarta.mail.MessagingException;
 
 @SpringBootTest
-@EmbeddedKafka(partitions = 1)
-@TestPropertySource(properties = {"spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}"})
-@ActiveProfiles("test") 
 public class EmailServiceTest {
     @Value("${spring.mail.username}")
     private String USERNAME;

@@ -1,19 +1,20 @@
-package com.example.datamodels.events.user;
+package com.example.datamodels.models.user;
 
 import java.time.LocalDateTime;
 
 import com.example.datamodels.entities.user.User;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserEvent {
     private UserEventType eventType;
     private String userEmail;
     private String message;
 
-    public UserEvent(){}
-
+    
     public UserEvent(User u, UserEventType e){
         this.eventType = e;
         this.userEmail = u.getEmail();
