@@ -1,0 +1,158 @@
+package com.example.controllers.user;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.datamodels.models.user.UserCreate;
+import com.example.datamodels.models.user.UserShort;
+import com.example.datamodels.models.user.UserUpdate;
+import com.example.services.UserService;
+
+// http://localhost:8080/swagger-ui/index.html
+// http://localhost:8080/v3/api-docs
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @Autowired
+    private final UserService service;
+
+    
+    public UserController(UserService service){
+        this.service = service;
+    }
+
+
+    /**
+     * Выполняет поиск пользователя
+     * по его идентификатору
+     * @param id Идентификатор пользователя
+     * @return Пользователь, полученный с сервера
+     */
+    @GetMapping("/get/{id}")
+    public ResponseEntity<EntityModel<UserShort>> getUserById(@PathVariable int id){
+        UserShort result = service.findById(id);
+
+        EntityModel<UserShort> model = EntityModel.of(result,
+                                            WebMvcLinkBuilder.linkTo(
+                                                WebMvcLinkBuilder
+                                                .methodOn(UserController.class)
+                                                .getUserById(id))
+                                            .withSelfRel(),
+                                            WebMvcLinkBuilder.linkTo(
+                                                WebMvcLinkBuilder
+                                                .methodOn(UserController.class)
+                                                .getUsers())
+                                            .withRel("get/all"));
+
+        return ResponseEntity.created(model.getRequiredLink("self").toUri()).body(model);
+    }
+    
+    /**
+     * Выводит список пользователей
+     * @return Список пользователей, полученные с сервера
+     */
+    @GetMapping("/get/all")
+    public CollectionModel<EntityModel<UserShort>> getUsers(){
+        List<UserShort> result = service.findAll();
+
+        List<EntityModel<UserShort>> model = result
+                                            .stream()
+                                            .map(e ->
+                                                EntityModel.of(e,
+                                                    WebMvcLinkBuilder.linkTo(
+                                                        WebMvcLinkBuilder
+                                                        .methodOn(UserController.class)
+                                                        .getUsers()
+                                                    ).withSelfRel()))
+                                                .collect(Collectors.toList());
+
+        return CollectionModel.of(model,
+                    WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder
+                        .methodOn(UserController.class)
+                        .getUsers())
+                    .withSelfRel());
+    }
+
+    /**
+     * Создает нового пользователя
+     * @param user Пользователь
+     * @return Пользователь, полученный с сервера
+     */
+    @PostMapping("/create")
+    public ResponseEntity<EntityModel<UserShort>> createUser(@RequestBody UserCreate userCreate){
+        UserShort result = service.save(userCreate);
+
+        EntityModel<UserShort> model = EntityModel.of(result,
+                                        WebMvcLinkBuilder.linkTo(
+                                            WebMvcLinkBuilder
+                                            .methodOn(UserController.class)
+                                            .createUser(userCreate))
+                                        .withSelfRel());
+
+        return ResponseEntity.created(model.getRequiredLink("self").toUri()).body(model);
+    }
+
+    /**
+     * Обновляет пользователя
+     * @param user Пользователь
+     * @return Пользователь, полученный с сервера
+     */
+    @PutMapping("/update")
+    public ResponseEntity<EntityModel<UserShort>> updateUser(@RequestBody UserUpdate user){
+        UserShort result = service.update(user.getId(), user.getName(), null, null);
+
+        EntityModel<UserShort> model = EntityModel.of(result,
+                                        WebMvcLinkBuilder.linkTo(
+                                            WebMvcLinkBuilder
+                                            .methodOn(UserController.class)
+                                            .updateUser(user))
+                                        .withSelfRel());
+
+        return ResponseEntity.created(model.getRequiredLink("self").toUri()).body(model);
+    }
+
+    /**
+     * Удаляет пользователя
+     * @param id Идентификатор пользователя
+     * @return Пользователь, полученный сервера
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<EntityModel<UserShort>> deleteUserById(@RequestBody int id){
+        UserShort result = service.delete(id);
+
+        EntityModel<UserShort> model = EntityModel.of(result,
+                                WebMvcLinkBuilder.linkTo(
+                                    WebMvcLinkBuilder
+                                    .methodOn(UserController.class)
+                                    .deleteUserById(id))
+                                .withSelfRel());
+
+        return ResponseEntity.created(model.getRequiredLink("self").toUri()).body(model);
+    }
+
+    /**
+     * Выполняет подсчет пользователей
+     * @return Число пользователей
+     */
+    @GetMapping("/count")
+    public ResponseEntity<Long> count(){
+        long result = service.count();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+}
