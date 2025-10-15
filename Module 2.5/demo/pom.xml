@@ -15,7 +15,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>common</module>
 		<module>user-service</module>
 		<module>user-notification-service</module>
 	</modules>
@@ -41,14 +40,8 @@
 		<java.version>17</java.version>
 	</properties>
 	
-
-
 	<build>
 		<plugins>
-			<!-- <plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

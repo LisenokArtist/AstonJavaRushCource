@@ -17,8 +17,8 @@ import org.springframework.test.context.TestPropertySource;
 import com.example.datamodels.entities.user.User;
 import com.example.datamodels.models.user.UserEvent;
 import com.example.datamodels.models.user.UserEvent.UserEventType;
-import com.example.services.UserEventSender;
 import com.example.services.user.UserEventListener;
+import com.example.services.user.UserEventSender;
 
 @SpringBootTest
 @EmbeddedKafka(partitions = 1)

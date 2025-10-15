@@ -21,8 +21,8 @@ import com.example.datamodels.entities.user.User;
 import com.example.datamodels.models.user.UserEvent.UserEventType;
 import com.example.datamodels.models.user.UserShort;
 import com.example.repositories.user.UserRepository;
-import com.example.services.UserService;
 import com.example.services.user.UserEventListener;
+import com.example.services.user.UserService;
 
 @SpringBootTest
 @EmbeddedKafka(partitions = 1)

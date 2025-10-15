@@ -1,4 +1,4 @@
-package com.example.services;
+package com.example.services.user;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
