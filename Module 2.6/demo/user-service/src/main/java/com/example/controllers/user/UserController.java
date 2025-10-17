@@ -23,6 +23,9 @@ import com.example.datamodels.models.user.UserShort;
 import com.example.datamodels.models.user.UserUpdate;
 import com.example.services.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 // http://localhost:8080/swagger-ui/index.html
 // http://localhost:8080/v3/api-docs
 @RestController
@@ -44,7 +47,13 @@ public class UserController {
      * @return Пользователь, полученный с сервера
      */
     @GetMapping("/get/{id}")
-    public ResponseEntity<EntityModel<UserShort>> getUserById(@PathVariable int id){
+    @Operation(
+        summary = "Find user",
+        description="Searches for a user by user ID"
+    )
+    public ResponseEntity<EntityModel<UserShort>> getUserById(
+        @Parameter(description="Unique identifier of the user", example="123")
+        @PathVariable(required=true) int id){
         UserShort result = service.findById(id);
 
         EntityModel<UserShort> model = EntityModel.of(result,
@@ -66,6 +75,10 @@ public class UserController {
      * Выводит список пользователей
      * @return Список пользователей, полученные с сервера
      */
+    @Operation(
+        summary = "Find users",
+        description="Searches for all users"
+    )
     @GetMapping("/get/all")
     public CollectionModel<EntityModel<UserShort>> getUsers(){
         List<UserShort> result = service.findAll();
@@ -94,8 +107,14 @@ public class UserController {
      * @param user Пользователь
      * @return Пользователь, полученный с сервера
      */
+    @Operation(
+        summary = "Crate user",
+        description="Creates a new user",
+        requestBody=@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Create user model", required = true)
+    )
     @PostMapping("/create")
-    public ResponseEntity<EntityModel<UserShort>> createUser(@RequestBody UserCreate userCreate){
+    public ResponseEntity<EntityModel<UserShort>> createUser(
+        @RequestBody UserCreate userCreate){
         UserShort result = service.save(userCreate);
 
         EntityModel<UserShort> model = EntityModel.of(result,
@@ -113,6 +132,11 @@ public class UserController {
      * @param user Пользователь
      * @return Пользователь, полученный с сервера
      */
+    @Operation(
+        summary = "Update user",
+        description="Updates fields of a user",
+        requestBody=@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Update user model", required = true)
+    )
     @PutMapping("/update")
     public ResponseEntity<EntityModel<UserShort>> updateUser(@RequestBody UserUpdate user){
         UserShort result = service.update(user.getId(), user.getName(), null, null);
@@ -132,8 +156,14 @@ public class UserController {
      * @param id Идентификатор пользователя
      * @return Пользователь, полученный сервера
      */
+    @Operation(
+        summary = "Delete user",
+        description="Deletes user by id"
+    )
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<EntityModel<UserShort>> deleteUserById(@RequestBody int id){
+    public ResponseEntity<EntityModel<UserShort>> deleteUserById(
+        @Parameter(description="Unique identifier of the user", example="123")
+        @RequestBody int id){
         UserShort result = service.delete(id);
 
         EntityModel<UserShort> model = EntityModel.of(result,
@@ -150,6 +180,10 @@ public class UserController {
      * Выполняет подсчет пользователей
      * @return Число пользователей
      */
+    @Operation(
+        summary = "Count records",
+        description="Performs a count of users stored in the DB"
+    )
     @GetMapping("/count")
     public ResponseEntity<Long> count(){
         long result = service.count();
