@@ -25,11 +25,15 @@ import com.example.services.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 // http://localhost:8080/swagger-ui/index.html
 // http://localhost:8080/v3/api-docs
 @RestController
 @RequestMapping("/api/users")
+@Tag(
+    name = "User Controller", 
+    description = "Operations related to user manipulation")
 public class UserController {
     @Autowired
     private final UserService service;
