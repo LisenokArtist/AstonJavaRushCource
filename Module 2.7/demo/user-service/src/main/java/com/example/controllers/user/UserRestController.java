@@ -27,19 +27,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-// http://localhost:8080/swagger-ui/index.html
-// http://localhost:8080/v3/api-docs
+// http://localhost:8082/swagger-ui/index.html
+// http://localhost:8082/v3/api-docs
 @RestController
 @RequestMapping("/api/users")
 @Tag(
     name = "User Controller", 
     description = "Operations related to user manipulation")
-public class UserController {
+public class UserRestController {
     @Autowired
     private final UserService service;
 
     
-    public UserController(UserService service){
+    public UserRestController(UserService service){
         this.service = service;
     }
 
@@ -63,12 +63,12 @@ public class UserController {
         EntityModel<UserShort> model = EntityModel.of(result,
                                             WebMvcLinkBuilder.linkTo(
                                                 WebMvcLinkBuilder
-                                                .methodOn(UserController.class)
+                                                .methodOn(UserRestController.class)
                                                 .getUserById(id))
                                             .withSelfRel(),
                                             WebMvcLinkBuilder.linkTo(
                                                 WebMvcLinkBuilder
-                                                .methodOn(UserController.class)
+                                                .methodOn(UserRestController.class)
                                                 .getUsers())
                                             .withRel("get/all"));
 
@@ -93,7 +93,7 @@ public class UserController {
                                                 EntityModel.of(e,
                                                     WebMvcLinkBuilder.linkTo(
                                                         WebMvcLinkBuilder
-                                                        .methodOn(UserController.class)
+                                                        .methodOn(UserRestController.class)
                                                         .getUsers()
                                                     ).withSelfRel()))
                                                 .collect(Collectors.toList());
@@ -101,7 +101,7 @@ public class UserController {
         return CollectionModel.of(model,
                     WebMvcLinkBuilder.linkTo(
                         WebMvcLinkBuilder
-                        .methodOn(UserController.class)
+                        .methodOn(UserRestController.class)
                         .getUsers())
                     .withSelfRel());
     }
@@ -124,7 +124,7 @@ public class UserController {
         EntityModel<UserShort> model = EntityModel.of(result,
                                         WebMvcLinkBuilder.linkTo(
                                             WebMvcLinkBuilder
-                                            .methodOn(UserController.class)
+                                            .methodOn(UserRestController.class)
                                             .createUser(userCreate))
                                         .withSelfRel());
 
@@ -148,7 +148,7 @@ public class UserController {
         EntityModel<UserShort> model = EntityModel.of(result,
                                         WebMvcLinkBuilder.linkTo(
                                             WebMvcLinkBuilder
-                                            .methodOn(UserController.class)
+                                            .methodOn(UserRestController.class)
                                             .updateUser(user))
                                         .withSelfRel());
 
@@ -173,7 +173,7 @@ public class UserController {
         EntityModel<UserShort> model = EntityModel.of(result,
                                 WebMvcLinkBuilder.linkTo(
                                     WebMvcLinkBuilder
-                                    .methodOn(UserController.class)
+                                    .methodOn(UserRestController.class)
                                     .deleteUserById(id))
                                 .withSelfRel());
 

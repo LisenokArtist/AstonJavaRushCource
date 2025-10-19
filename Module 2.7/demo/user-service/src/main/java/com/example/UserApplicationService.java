@@ -10,9 +10,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 // Для запуска требуется рабочий контейнер с kafka, 
 // обновить spring.kafka.bootstrap-servers соответственно
-public class UserServiceApplication {
+public class UserApplicationService {
     public static void main(String[] args) {
-        SpringApplication.run(UserServiceApplication.class, args);
+        SpringApplication.run(UserApplicationService.class, args);
 
         //Просто ставим в цикл до следующего ввода чего-то в консоль
         @SuppressWarnings("unused")
