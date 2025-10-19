@@ -17,8 +17,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-// http://localhost:8081/swagger-ui/index.html
-// http://localhost:8081/v3/api-docs
+// http://localhost:8083/swagger-ui/index.html
+// http://localhost:8083/v3/api-docs
 @RestController
 @RequestMapping("/api/email")
 @Tag(

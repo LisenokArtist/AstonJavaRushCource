@@ -23,9 +23,6 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
 @SpringBootTest
 public class CircuitBreakerTest {
-    @Mock
-    private UserRepository repository;
-    
     @Spy
     @InjectMocks
     private UserService service;
@@ -35,8 +32,6 @@ public class CircuitBreakerTest {
     @BeforeEach
     @SuppressWarnings("unused")
     void beforeEach() {
-        // fillDataBaseIfEmpty(service);
-
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
                 .failureRateThreshold(50)
                 .waitDurationInOpenState(Duration.ofSeconds(1))
@@ -65,13 +60,6 @@ public class CircuitBreakerTest {
         List<User> result = service.findAll();
         assertTrue(!result.isEmpty());
     }
-
-    // private static void fillDataBaseIfEmpty(UserService service){
-    //     if (service.count() <= 0){
-    //         List<User> users = createUsers(10);
-    //         service.saveAll(users);
-    //     }
-    // }
 
 	private static List<User> createUsers(int count){
         List<User> users = new ArrayList<>();
