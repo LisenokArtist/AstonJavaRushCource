@@ -1,0 +1,16 @@
+server: 
+  port: 8888 
+spring: 
+  application: 
+    name: cloud-config-service
+  security: 
+    basic: 
+      enabled: true 
+    user: 
+      name: name 
+      password: password
+  cloud: 
+    config: 
+      server: 
+        git: 
+          uri: https://github.com/LisenokArtist/AstonJavaRushCource.git
