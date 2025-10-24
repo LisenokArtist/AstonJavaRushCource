@@ -12,6 +12,7 @@ import com.example.datamodels.models.user.UserCreate;
 import com.example.datamodels.models.user.UserShort;
 import com.example.repositories.user.UserRepository;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -29,11 +30,13 @@ public class UserService {
         this.sender = sender;
     }
 
+    @CircuitBreaker(name="findFirstBreaker", fallbackMethod="onFallback")
     public UserShort findFirst(){
         User result = repository.findFirst();
         return new UserShort(result);
     }
 
+    @CircuitBreaker(name="findAllBreaker", fallbackMethod="onFallback")
     public List<UserShort> findAll(){
         List<UserShort> result = repository
                                 .findAll()
@@ -43,18 +46,21 @@ public class UserService {
         return result;
     }
 
+    @CircuitBreaker(name="findByIdBreaker", fallbackMethod="onFallback")
     public UserShort findById(int id){
         Optional<User> result = repository.findById(id);
         User user = result.orElseThrow(() -> new EntityNotFoundException(USERNOTFOUND));
         return new UserShort(user);
     }
 
+    @CircuitBreaker(name="saveBreaker", fallbackMethod="onFallback")
     public UserShort save(UserCreate userCreate){
         User result = repository.save(new User(userCreate.getName(), userCreate.getAge(), userCreate.getEmail()));
         sender.sendEventCreate(result);
         return new UserShort(result);
     }
 
+    @CircuitBreaker(name="saveAllBreaker", fallbackMethod="onFallback")
     public List<UserShort> saveAll(List<UserCreate> users){
         var usersCreated = users.stream()
                                 .map(x -> new User(x.getName(), x.getAge(), x.getEmail()))
@@ -63,6 +69,7 @@ public class UserService {
         return result.stream().map(x -> new UserShort(x)).collect(Collectors.toList());
     }
 
+    @CircuitBreaker(name="updateBreaker", fallbackMethod="onFallback")
     public UserShort update(User user){
         return update(
             user.getId(), 
@@ -71,6 +78,7 @@ public class UserService {
             user.getEmail());
     }
 
+    @CircuitBreaker(name="updateBreaker", fallbackMethod="onFallback")
     public UserShort update(
         int id,
         String name,
@@ -82,6 +90,7 @@ public class UserService {
         return new UserShort(user);
     }
 
+    @CircuitBreaker(name="deleteBreaker", fallbackMethod="onFallback")
     public UserShort delete(int id){
         Optional<User> result = repository.findAndDeleteById(id);
         User user = result.orElseThrow(() -> new EntityNotFoundException(USERNOTFOUND));
@@ -89,7 +98,13 @@ public class UserService {
         return new UserShort(user);
     }
     
+    @CircuitBreaker(name="countBreaker", fallbackMethod="onFallback")
     public long count(){
         return repository.count();
+    }
+
+    public String onFallback(Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return t.getMessage();
     }
 }

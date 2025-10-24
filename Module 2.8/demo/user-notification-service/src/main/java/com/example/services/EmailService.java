@@ -10,6 +10,8 @@ import com.example.datamodels.models.mail.MailShort;
 import com.example.datamodels.models.user.UserEvent;
 import com.example.services.user.UserEventListener;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @Service
 public class EmailService {
     @Autowired
@@ -81,6 +83,7 @@ public class EmailService {
      * Отправляет сообщение на email
      * @param mail модель сообщения
      */
+    @CircuitBreaker(name="sendEmailBreaker", fallbackMethod="onFallback")
     public void sendEmail(MailShort mail){
         this.sendEmail(
             mail.getFrom(), 
@@ -96,6 +99,7 @@ public class EmailService {
      * @param subject тема
      * @param text сообщение
      */
+    @CircuitBreaker(name="sendEmailBreaker", fallbackMethod="onFallback")
     public void sendEmail(@Nullable String from, String to, String subject, String text){
         SimpleMailMessage message = new SimpleMailMessage();
         if (from != null) message.setFrom(from);
@@ -103,5 +107,10 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(text);
         mailSender.send(message);
+    }
+
+    public String onFallback(Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return t.getMessage();
     }
 }
