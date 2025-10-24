@@ -20,7 +20,6 @@
 		<module>user-notification-service</module>
 		<module>gateway-service</module>
 		<module>discovery-server-service</module>
-		<module>circuit-breaker-service</module>
 		<module>cloud-config-service</module>
 	</modules>
 
