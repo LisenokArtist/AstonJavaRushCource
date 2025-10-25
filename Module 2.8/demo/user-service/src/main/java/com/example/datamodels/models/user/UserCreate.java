@@ -4,13 +4,15 @@ import com.example.datamodels.entities.user.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserCreate {
-    private final String name;
-    private final int age;
-    private final String email;
+    private String name;
+    private int age;
+    private String email;
 
     public UserCreate(User user){
         this.name = user.getName();

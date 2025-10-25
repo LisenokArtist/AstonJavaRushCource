@@ -1,6 +1,7 @@
+version: "3.9"
+
 services:
   cloud-config-service:
-    image: cloud-config-service
     build:
       context: cloud-config-service/
       dockerfile: Dockerfile
@@ -8,7 +9,6 @@ services:
       - "8888:8888"
   
   discovery-server-service:
-    image: discovery-server-service
     build:
       context: discovery-server-service/
       dockerfile: Dockerfile
@@ -16,7 +16,6 @@ services:
       - "8761:8761"
 
   gateway-service:
-    image: gateway-service
     build:
       context: gateway-service/
       dockerfile: Dockerfile
@@ -24,57 +23,55 @@ services:
       - "8080:8080"
 
   user-notification-service:
-    image: user-notification-service
     build:
       context: user-notification-service/
       dockerfile: Dockerfile
     ports:
       - "8083:8083"
+    depends_on:
+      - kafka
+      - db
 
   user-service:
-    image: user-service
     build:
       context: user-service/
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
+    expose:
+      - "8082"
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/postgres"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server-service:8761/eureka
+
+      # SPRING_CONFIG_IMPORT: "http://config-server:8888"
+    depends_on:
+      - kafka
+      - db
   
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: apache/kafka:3.7.0
     ports:
       - "9092:9092"
       - "9093:9093"
     environment:
-      # Enable KRaft mode
       KAFKA_KRAFT_MODE: "true"
-      
-      # Set the node to be a controller and a broker
-      KAFKA_PROCESS_ROLES: controller,broker
-      
-      # Assign a unique node ID
       KAFKA_NODE_ID: 1
-      
-      # Specify the controller quorum voters
-      # Format: {id}@{host}:{port}
+      KAFKA_BROKER_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_MIN_INSYNC_REPLICAS: 2
+      KAFKA_CREATE_TOPICS: "user-events:3:1"
       
-      # Define listeners for both client communication (PLAINTEXT) and controller communication (CONTROLLER)
-      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-      
-      # Explicitly set the controller listener name
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-
-      # The internal communication listener for KRaft
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      
-      # Set the log directories
-      KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
-
-
-      
-  postgres:
+  db:
     image: 'postgres:13' # Use a specific PostgreSQL image version
     environment:
       POSTGRES_DB: 'postgres'
@@ -85,23 +82,7 @@ services:
     volumes:
       - 'postgres_data:/var/lib/postgresql/data' # Persist data
 
-  zookeeper:
-    image: 'zookeeper'
-    restart: always
-    ports:
-      - "2181:2181"
-    volumes:
-      - "zookeeper_data:/apache"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - bankAccount
-
 volumes:
-  zookeeper_data:
-    driver: local
   kafka_data:
     driver: local
   postgres_data:
-networks:
-  bankAccount:

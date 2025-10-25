@@ -16,7 +16,7 @@ import com.example.datamodels.entities.user.User;
 import com.example.datamodels.models.user.UserCreate;
 import com.example.services.UserService;
 
-@SpringBootTest
+@SpringBootTest(classes = UserApplicationService.class)
 public class UserServiceTest {
     @Autowired
     private UserService service;

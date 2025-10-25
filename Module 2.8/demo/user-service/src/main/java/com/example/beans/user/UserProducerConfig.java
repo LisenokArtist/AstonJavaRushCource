@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,7 +19,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import com.example.datamodels.models.user.UserEvent;
 
 @Configuration
-@EnableKafka
 @PropertySource("classpath:application.properties")
 public class UserProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
@@ -32,6 +30,8 @@ public class UserProducerConfig {
     public NewTopic userTopic(){
         return TopicBuilder
             .name(USERTOPIC)
+            .partitions(3) // Specify the number of partitions
+            .replicas(1) 
             .build();
     }
 

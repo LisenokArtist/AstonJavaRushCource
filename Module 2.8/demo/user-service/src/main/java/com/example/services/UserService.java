@@ -1,5 +1,6 @@
 package com.example.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,13 +31,13 @@ public class UserService {
         this.sender = sender;
     }
 
-    @CircuitBreaker(name="findFirstBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="findFirstBreaker", fallbackMethod="onQueryFallback")
     public UserShort findFirst(){
         User result = repository.findFirst();
         return new UserShort(result);
     }
 
-    @CircuitBreaker(name="findAllBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="findAllBreaker", fallbackMethod="onQueryesFallback")
     public List<UserShort> findAll(){
         List<UserShort> result = repository
                                 .findAll()
@@ -46,21 +47,21 @@ public class UserService {
         return result;
     }
 
-    @CircuitBreaker(name="findByIdBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="findByIdBreaker", fallbackMethod="onQueryFallback")
     public UserShort findById(int id){
         Optional<User> result = repository.findById(id);
         User user = result.orElseThrow(() -> new EntityNotFoundException(USERNOTFOUND));
         return new UserShort(user);
     }
 
-    @CircuitBreaker(name="saveBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="saveBreaker", fallbackMethod="onCreateFallback")
     public UserShort save(UserCreate userCreate){
         User result = repository.save(new User(userCreate.getName(), userCreate.getAge(), userCreate.getEmail()));
         sender.sendEventCreate(result);
         return new UserShort(result);
     }
 
-    @CircuitBreaker(name="saveAllBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="saveAllBreaker", fallbackMethod="onCreatesFallback")
     public List<UserShort> saveAll(List<UserCreate> users){
         var usersCreated = users.stream()
                                 .map(x -> new User(x.getName(), x.getAge(), x.getEmail()))
@@ -69,7 +70,7 @@ public class UserService {
         return result.stream().map(x -> new UserShort(x)).collect(Collectors.toList());
     }
 
-    @CircuitBreaker(name="updateBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="updateBreaker", fallbackMethod="onQueryFallback")
     public UserShort update(User user){
         return update(
             user.getId(), 
@@ -78,7 +79,7 @@ public class UserService {
             user.getEmail());
     }
 
-    @CircuitBreaker(name="updateBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="updateBreaker", fallbackMethod="onQueryFallback")
     public UserShort update(
         int id,
         String name,
@@ -90,7 +91,7 @@ public class UserService {
         return new UserShort(user);
     }
 
-    @CircuitBreaker(name="deleteBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="deleteBreaker", fallbackMethod="onQueryFallback")
     public UserShort delete(int id){
         Optional<User> result = repository.findAndDeleteById(id);
         User user = result.orElseThrow(() -> new EntityNotFoundException(USERNOTFOUND));
@@ -98,13 +99,47 @@ public class UserService {
         return new UserShort(user);
     }
     
-    @CircuitBreaker(name="countBreaker", fallbackMethod="onFallback")
+    @CircuitBreaker(name="countBreaker", fallbackMethod="onCountFallback")
     public long count(){
         return repository.count();
     }
 
-    public String onFallback(Throwable t){
+    public long onCountFallback(Throwable t){
         System.err.println("Fallback triggered: " + t.getMessage());
-        return t.getMessage();
+        return 0;
+    }
+
+    public List<UserShort> onCreatesFallback(List<UserCreate> users, Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return new ArrayList<UserShort>();
+    }
+
+    public UserShort onCreateFallback(UserCreate userCreate, Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return new UserShort(0, "Fallback");
+    }
+
+    public UserShort onQueryFallback(int id, String name, Integer age, String email, Throwable t){
+        User user = new User(name, age, email);
+        return onQueryFallback(user, t);
+    }
+
+    public UserShort onQueryFallback(User user, Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return new UserShort(user);
+    }
+
+    public UserShort onQueryFallback(Throwable t){
+        return onQueryFallback(0, t);
+    }
+
+    public UserShort onQueryFallback(int id, Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return new UserShort(id, "Fallback");
+    }
+
+    public List<UserShort> onQueryesFallback(Throwable t){
+        System.err.println("Fallback triggered: " + t.getMessage());
+        return new ArrayList<UserShort>();
     }
 }
