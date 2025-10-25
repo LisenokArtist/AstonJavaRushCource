@@ -1,0 +1,107 @@
+services:
+  cloud-config-service:
+    image: cloud-config-service
+    build:
+      context: cloud-config-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+  
+  discovery-server-service:
+    image: discovery-server-service
+    build:
+      context: discovery-server-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+
+  gateway-service:
+    image: gateway-service
+    build:
+      context: gateway-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+
+  user-notification-service:
+    image: user-notification-service
+    build:
+      context: user-notification-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+
+  user-service:
+    image: user-service
+    build:
+      context: user-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      # Enable KRaft mode
+      KAFKA_KRAFT_MODE: "true"
+      
+      # Set the node to be a controller and a broker
+      KAFKA_PROCESS_ROLES: controller,broker
+      
+      # Assign a unique node ID
+      KAFKA_NODE_ID: 1
+      
+      # Specify the controller quorum voters
+      # Format: {id}@{host}:{port}
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      
+      # Define listeners for both client communication (PLAINTEXT) and controller communication (CONTROLLER)
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      
+      # Explicitly set the controller listener name
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # The internal communication listener for KRaft
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      
+      # Set the log directories
+      KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
+
+
+      
+  postgres:
+    image: 'postgres:13' # Use a specific PostgreSQL image version
+    environment:
+      POSTGRES_DB: 'postgres'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: '0'
+    ports:
+      - '5432:5432' # Map host port 5432 to container port 5432
+    volumes:
+      - 'postgres_data:/var/lib/postgresql/data' # Persist data
+
+  zookeeper:
+    image: 'zookeeper'
+    restart: always
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/apache"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - bankAccount
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+  postgres_data:
+networks:
+  bankAccount:

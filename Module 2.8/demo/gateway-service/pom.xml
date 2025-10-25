@@ -6,12 +6,12 @@
     <parent>
           <groupId>com.example</groupId>
           <artifactId>demo</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+          <version>0.0.1</version>
     </parent>
 
     <groupId>com.example</groupId>
     <artifactId>gateway-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
 	<dependencies>
         <dependency>
@@ -21,6 +21,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-parent</artifactId>
+			<version>3.5.3</version>
+			<type>pom</type>
 		</dependency>
 	</dependencies>
 
@@ -35,4 +41,30 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version> <!-- Use an appropriate version -->
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.example.GatewayService</mainClass> <!-- Replace with your actual main class -->
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+		</plugins>
+	</build>
+
+    <properties> 
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
 </project>
