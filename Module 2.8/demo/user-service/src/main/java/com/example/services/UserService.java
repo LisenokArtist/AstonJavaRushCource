@@ -140,6 +140,6 @@ public class UserService {
 
     public List<UserShort> onQueryesFallback(Throwable t){
         System.err.println("Fallback triggered: " + t.getMessage());
-        return new ArrayList<UserShort>();
+        return new ArrayList<>();
     }
 }
