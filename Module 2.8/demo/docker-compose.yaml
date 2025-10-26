@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8888:8888"
+    networks:
+      - general
   
   discovery-server-service:
     build:
@@ -14,6 +16,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8761:8761"
+    networks:
+      - general
 
   gateway-service:
     build:
@@ -21,6 +25,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICE_URL: http://discovery-server-service:8761/eureka
+    depends_on:
+      - discovery-server-service
+    networks:
+      - general
 
   user-notification-service:
     build:
@@ -57,6 +67,8 @@ services:
     depends_on:
       - kafka
       - db
+    networks:
+      - general
   
   kafka:
     image: apache/kafka:3.7.0
@@ -81,6 +93,8 @@ services:
       KAFKA_DEFAULT_REPLICATION_FACTOR: 3
       KAFKA_MIN_INSYNC_REPLICAS: 2
       KAFKA_CREATE_TOPICS: 'user-events:3:1'
+    networks:
+      - general
       
   db:
     image: 'postgres:13' # Use a specific PostgreSQL image version
@@ -92,8 +106,14 @@ services:
       - '5432:5432' # Map host port 5432 to container port 5432
     volumes:
       - 'postgres_data:/var/lib/postgresql/data' # Persist data
+    networks:
+      - general
 
 volumes:
   kafka_data:
     driver: local
   postgres_data:
+
+networks:
+  general:
+    driver: bridge
