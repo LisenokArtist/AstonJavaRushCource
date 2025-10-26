@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8888:8888"
+    environment:
+      EUREKA_CLIENT_SERVICE_URL: http://discovery-server-service:8761/eureka
     networks:
       - general
   
@@ -41,14 +43,15 @@ services:
     expose:
       - "8083"
     environment:
-      EUREKA_HOST: eureka-server
-      KAFKA_HOST: kafka
-      POSTGRES_HOST: db
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/postgres"
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka
+      POSTGRES_HOST: postgres
+      EUREKA_CLIENT_SERVICE_URL: http://discovery-server-service:8761/eureka
     depends_on:
       - kafka
-      - db
+      - postgres
+      - discovery-server-service
+    networks:
+      - general
 
   user-service:
     build:
@@ -59,14 +62,13 @@ services:
     expose:
       - "8082"
     environment:
-      EUREKA_HOST: eureka-server
-      KAFKA_HOST: kafka
-      POSTGRES_HOST: db
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/postgres"
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka
+      POSTGRES_HOST: postgres
+      EUREKA_CLIENT_SERVICE_URL: http://discovery-server-service:8761/eureka
     depends_on:
       - kafka
-      - db
+      - postgres
+      - discovery-server-service
     networks:
       - general
   
@@ -75,17 +77,14 @@ services:
     ports:
       - "9092:9092"
       - "9093:9093"
-      - "29092:29092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_BROKER_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
-      # KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:9092'
-      # KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
@@ -96,16 +95,22 @@ services:
     networks:
       - general
       
-  db:
-    image: 'postgres:13' # Use a specific PostgreSQL image version
+  postgres:
+    image: 'postgres:13'
+    restart: always
+    container_name: postgres-db
     environment:
-      POSTGRES_DB: 'postgres'
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: '0'
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "0"
+      POSTGRES_EXTRA_OPTS: "listen_addresses = '*'"
     ports:
-      - '5432:5432' # Map host port 5432 to container port 5432
+      - "5433:5432"
+    expose:
+      - "5432"
+      - "5433"
     volumes:
-      - 'postgres_data:/var/lib/postgresql/data' # Persist data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - general
 
